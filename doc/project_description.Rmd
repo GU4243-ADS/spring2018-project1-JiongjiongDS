@@ -1,6 +1,6 @@
 ---
 output:
-  pdf_document: default
+  
   html_document: default
 ---
 ## STAT GU4243 Spring 2018 Applied Data Science
@@ -14,7 +14,7 @@ This data was originally used in a [Kaggle competition](https://www.kaggle.com/c
 
 [1] David Madigan, Alexander Genkin, David D. Lewis, Shlomo Argamon, Dmitriy Fradkin, Li Ye. "Authorship attribution on the Large Scale." [available online](http://dimacs.rutgers.edu/Research/MMS/PAPERS/authorid-csna05.pdf).
 
-[2] Efstathios Stamatatos. "A survey of modern authorship attribution methods." Journal of the American Society for information Science and Technology, 60(3):538â€“556, 2009.
+[2] Efstathios Stamatatos. "A survey of modern authorship attribution methods." Journal of the American Society for information Science and Technology, 60(3):538â€?556, 2009.
 
 [3] Ahmed M. Mohsen, Nagwa M. El-Makky, and Nagia Ghanem. "Author Identification Using Deep Learning." Proceedings of the 15th IEEE International Conference on Machine Learning and Applications, 2016.
 

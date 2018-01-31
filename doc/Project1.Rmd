@@ -1,0 +1,56 @@
+---
+title: "Project1_Spooky Textual Analysis"
+author: "Toby"
+date: "01/30/2018"
+output: html_document
+---
+# Section 0 Preparations, install and load the needed packages
+```{r}
+packages.used <- c("ggplot2", "dplyr", "tibble", "tidyr",  "stringr", "tidytext", "topicmodels", "wordcloud", "ggridges")
+
+# check packages that need to be installed.
+packages.needed <- setdiff(packages.used, intersect(installed.packages()[,1], packages.used))
+
+# install additional packages
+if(length(packages.needed) > 0) {
+  install.packages(packages.needed, dependencies = TRUE, repos = 'http://cran.us.r-project.org')
+}
+
+library(ggplot2)
+library(dplyr)
+library(tibble)
+library(tidyr)
+library(stringr)
+library(tidytext)
+library(topicmodels)
+library(wordcloud)
+library(ggridges)
+
+source("../libs/multiplot.R")
+```
+
+```{r}
+spooky <- read.csv('../data/spooky.csv', as.is = TRUE)
+```
+
+# Data overview
+```{r}
+head(spooky)
+summary(spooky)
+glimpse(spooky)
+```
+
+to change the data type of author
+
+```{r}
+sum(is.na(spooky))
+spooky$author <- as.factor(spooky$author)
+```
+
+# data cleaning
+uss the unnest_token to drop the punctuation and transform the words to lower cases
+```{r}
+spooky_wrd<-unnest_tokens(spooky,word,text)
+spooky_wrd<-anti_join(spooky_wrd,stop_words,by="word")
+```
+# word cloud graph
