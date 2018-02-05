@@ -3,13 +3,13 @@ title: ' An R Notebook Data Story on Horror Stories'
 author: "Toby"
 date: "01/30/2018"
 output:
-  word_document: default
   pdf_document: default
   html_document: default
+  word_document: default
 ---
 # Section 0 Preparations, install and load the needed packages
 ```{r}
-packages.used <- c("ggplot2", "dplyr", "tibble", "tidyr",  "stringr", "tidytext", "topicmodels", "wordcloud", "ggridges")
+packages.used <- c("ggplot2", "dplyr", "tibble", "tidyr",  "stringr", "tidytext", "topicmodels", "wordcloud", "ggridges","SnowballC")
 
 # check packages that need to be installed.
 packages.needed <- setdiff(packages.used, intersect(installed.packages()[,1], packages.used))
@@ -28,6 +28,7 @@ library(tidytext)
 library(topicmodels)
 library(wordcloud)
 library(ggridges)
+library(SnowballC)
 
 
 source("../lib/multiplot.R")
@@ -99,7 +100,7 @@ wordcloud(words_MWS, freqs_MWS, max.words = 30, color = c("blue4"))
 #dev.off()
 ```
 We can see that different authors have different preferences for using words. For Edgar Allan Poe, he most frequently use words like "mind" and "manner".  HP Lovecraft likes to use words "strange" and "horror". While for Mary Shelley, her most frequent words are "love" and "death".These frequent words are pretty normal for the horror authors.
-
+## Data Visualization
 Data Visualization and comparation, We have done some numerical summaries of the data to provide some nice visualizations.
 ```{r}
 p1 <- ggplot(spooky) +
@@ -129,7 +130,7 @@ multiplot(p1, p2, p3, layout = layout)
 dev.off()
 ```
 So in the spooky data, Edgar Allan Poe has the most sentences and HP Lovecraft has the least. As for the average sentence length, HP Lovecraft writes the longgest sentence while Edgar Allan Poe writes the shortest sentence. When it comes to the average word length, we can see that Edgar Allan Poe uses the longgest word and there is no clear difference in word length between HP Lovecraft and Mary Shelley.
-
+## He/She difference
 we decide to take a look at the He/She, to explore over the gender differenc. (This requires the stop words not be removed as "he" or "she" are usually taken as the stop words)
 ```{r}
 male<-c("he","him","his")
@@ -150,7 +151,53 @@ ggplot(dt2, aes(x = var, y = count, fill = Gender))+
 dev.off()
 ```
 Both Edgar Allan Poe and HP Lovecraft have very clear preference in using masculine third-person word or feminine third-person word. Edgar Allan Poe uses the masculine third-person word more often (he,him,his) while HP Lovecraft uses the feminine third-person word (she,her) more often. Mary Shelley uses masculine third-person word and feminine third-person word almost equally (A bit more in masculine).
+## TF-IDF
+We try to find words that are characteristic for a specific author by using tf-idf as a heuristic index to indicate how frequently a certain author uses a word.
+```{r}
+frequency <- count(spooky_wrd, author, word)
+tf_idf    <- bind_tf_idf(frequency, word, author, n)
+
+tf_idf    <- arrange(tf_idf, desc(tf_idf))
+tf_idf    <- mutate(tf_idf, word = factor(word, levels = rev(unique(word))))
+
+# Grab the top thirty tf_idf scores in all the words 
+tf_idf_30 <- top_n(tf_idf, 30, tf_idf)
+png('../figs/tf_idf.png')
+p_tf<-ggplot(tf_idf_30) +
+  geom_col(aes(word, tf_idf, fill = author)) +
+  labs(x = NULL, y = "TF-IDF values") +
+  theme(legend.position = "top", axis.text.x  = element_text(angle=45, hjust=1, vjust=0.9))
+p_tf
+dev.off()
+```
+The above graph shows the thirty tf_idf scores in all the words and we see that words from Mary Shelley have the highest TF-IDF values. Besides, most of the words in the top 30 are actually names. Names work quite well in identifying authors as there is little possibilty that different authors will use the same name for their characters.
+## TF-IDF after stemming
+We use the "wordstem" function to extract the stems of each of the given words and then compute the TF-IDF values of words again to find if the results changes or not.
+```{r}
+test<-apply(as.array(spooky_wrd$word),1,wordStem)
+spook_wrd_2<-spooky_wrd
+spooky_wrd$word<-test
+spooky_wrd_stem<-spooky_wrd
+spooky_wrd<-spook_wrd_2
+frequency <- count(spooky_wrd, author, word)
+tf_idf    <- bind_tf_idf(frequency, word, author, n)
+
+tf_idf    <- arrange(tf_idf, desc(tf_idf))
+tf_idf    <- mutate(tf_idf, word = factor(word, levels = rev(unique(word))))
+
+# Grab the top thirty tf_idf scores in all the words 
+tf_idf_30 <- top_n(tf_idf, 30, tf_idf)
+png('../figs/tf_idf_stem.png')
+p_ts<-ggplot(tf_idf_30) +
+  geom_col(aes(word, tf_idf, fill = author)) +
+  labs(x = NULL, y = "TF-IDF values") +
+  theme(legend.position = "top", axis.text.x  = element_text(angle=45, hjust=1, vjust=0.9))
+p_ts
+dev.off()
+```
+Note that the graph result actually don't change. Maybe it's because the high TF-IDF value words are names. The stems of names are the same as names. 
 #Sentiment Analysis
+## nrc lexicon
 In the sentiment analysis part, we want to measure what is the proportion of the sentiment was positive or negative. We first use the nrc lexicons.
 ```{r}
 nrc_filter <- filter(get_sentiments('nrc'), sentiment %in% c("positive","negative"))
@@ -211,7 +258,7 @@ multiplot(p4,p5,p6,cols=2)
 dev.off()
 ```
 Overall we can see that in different authors' text, the negative sentiment accounts more than the positive sentiment. In Edgar Allan Poe's article, he has more positive parts.
-
+## bing lexicon
 Now we repeat what we did in last part again, but this time we use the "bing" lexicons, we use the setiment analysis package of bing
 ```{r}
 sentiments_bing<-inner_join(spooky_wrd, get_sentiments('bing'), by = "word")
@@ -271,7 +318,7 @@ multiplot(p4,p5,p6,cols=2)
 dev.off()
 ```
 Using the "bing" lexicon, the result actually doesn't change. In text,the negative sentiment accounts more than the positive sentiment. Besides, we can see that now the neagtive sentiment is accounting more part than before. Now in Edgar Allan Poe's article, he has more negative parts.
-
+## Emotion rank
 In this part we will try to find what are the top few emotions represented by each author and the difference
 ```{r}
 sentiments <- inner_join(spooky_wrd, get_sentiments('nrc'), by = "word")
