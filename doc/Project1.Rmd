@@ -1,10 +1,10 @@
 ---
-title: ' An R Notebook Data Story on Horror Stories'
-author: "Toby"
+title: ' Project1: An R Notebook Data Story on Horror Stories'
+author: "Jiongjiong Li"
 date: "01/30/2018"
 output:
-  pdf_document: default
   html_document: default
+  pdf_document: default
   word_document: default
 ---
 # Section 0 Preparations, install and load the needed packages
@@ -34,6 +34,7 @@ library(SnowballC)
 source("../lib/multiplot.R")
 ```
 # Section 1: Data Preparation
+
 ## Data load and overview
 ```{r}
 spooky <- read.csv('../data/spooky.csv', as.is = TRUE)
@@ -66,14 +67,15 @@ EAP_nstop<-filter(spooky_wrd,author=="EAP")
 MWS_nstop<-filter(spooky_wrd,author=="MWS")
 HPL_nstop<-filter(spooky_wrd,author=="HPL")
 ```
+
 ## Word Colud Generation
 We generate one word cloud graph of the whole spooky file.
 ```{r}
-png('../figs/whole_cloud.png')
+#png('../figs/whole_cloud.png')
  spooky_wrd %>%
   count(word) %>%
   with(wordcloud(word, n, max.words = 50, color = c("purple4", "red4", "black")))
-dev.off()
+#dev.off()
 ```
 We draw the worldcloud for EAP
 ```{r}
@@ -100,6 +102,7 @@ wordcloud(words_MWS, freqs_MWS, max.words = 30, color = c("blue4"))
 #dev.off()
 ```
 We can see that different authors have different preferences for using words. For Edgar Allan Poe, he most frequently use words like "mind" and "manner".  HP Lovecraft likes to use words "strange" and "horror". While for Mary Shelley, her most frequent words are "love" and "death".These frequent words are pretty normal for the horror authors.
+
 ## Data Visualization
 Data Visualization and comparation, We have done some numerical summaries of the data to provide some nice visualizations.
 ```{r}
@@ -125,11 +128,12 @@ dt1$word_length<-c(EAPwrd_length,MWSwrd_length,HPLwrd_length)
 p3 <- ggplot(dt1,aes(x=Author,y=word_length,fill=Author))+
       geom_bar(stat="identity", position=position_dodge())
 layout <- matrix(c(1, 2, 1, 3), 2, 2, byrow = TRUE)
-png('../figs/author_compare.png')
+#png('../figs/author_compare.png')
 multiplot(p1, p2, p3, layout = layout)
-dev.off()
+#dev.off()
 ```
 So in the spooky data, Edgar Allan Poe has the most sentences and HP Lovecraft has the least. As for the average sentence length, HP Lovecraft writes the longgest sentence while Edgar Allan Poe writes the shortest sentence. When it comes to the average word length, we can see that Edgar Allan Poe uses the longgest word and there is no clear difference in word length between HP Lovecraft and Mary Shelley.
+
 ## He/She difference
 we decide to take a look at the He/She, to explore over the gender differenc. (This requires the stop words not be removed as "he" or "she" are usually taken as the stop words)
 ```{r}
@@ -141,16 +145,17 @@ heHPL<-dim(filter(HPL,word %in% male))[1]
 sheHPL<-dim(filter(HPL,word %in% female))[1]
 heMWS<-dim(filter(MWS,word %in% male))[1]
 sheMWS<-dim(filter(MWS,word %in% female))[1]
-dt2=as.data.frame(matrix(c(rep("male",3),rep("female",3)),nrow=6,ncol=1))
+dt2=as.data.frame(matrix(c(rep("masculine",3),rep("feminine",3)),nrow=6,ncol=1))
 colnames(dt2)<-"Gender"
-dt2$var<-c(rep(c("EAP","HPL","MWS"),2))
+dt2$author<-c(rep(c("EAP","HPL","MWS"),2))
 dt2$count<-c(heEAP,sheEAP,heHPL,sheHPL,heMWS,sheMWS)
-png('../figs/gender_difference.png')
-ggplot(dt2, aes(x = var, y = count, fill = Gender))+ 
+#png('../figs/gender_difference.png')
+ggplot(dt2, aes(x = author, y = count, fill = Gender))+ 
    geom_bar(stat="identity", position=position_dodge())
-dev.off()
+#dev.off()
 ```
 Both Edgar Allan Poe and HP Lovecraft have very clear preference in using masculine third-person word or feminine third-person word. Edgar Allan Poe uses the masculine third-person word more often (he,him,his) while HP Lovecraft uses the feminine third-person word (she,her) more often. Mary Shelley uses masculine third-person word and feminine third-person word almost equally (A bit more in masculine).
+
 ## TF-IDF
 We try to find words that are characteristic for a specific author by using tf-idf as a heuristic index to indicate how frequently a certain author uses a word.
 ```{r}
@@ -162,15 +167,16 @@ tf_idf    <- mutate(tf_idf, word = factor(word, levels = rev(unique(word))))
 
 # Grab the top thirty tf_idf scores in all the words 
 tf_idf_30 <- top_n(tf_idf, 30, tf_idf)
-png('../figs/tf_idf.png')
+#png('../figs/tf_idf.png')
 p_tf<-ggplot(tf_idf_30) +
   geom_col(aes(word, tf_idf, fill = author)) +
   labs(x = NULL, y = "TF-IDF values") +
   theme(legend.position = "top", axis.text.x  = element_text(angle=45, hjust=1, vjust=0.9))
 p_tf
-dev.off()
+#dev.off()
 ```
 The above graph shows the thirty tf_idf scores in all the words and we see that words from Mary Shelley have the highest TF-IDF values. Besides, most of the words in the top 30 are actually names. Names work quite well in identifying authors as there is little possibilty that different authors will use the same name for their characters.
+
 ## TF-IDF after stemming
 We use the "wordstem" function to extract the stems of each of the given words and then compute the TF-IDF values of words again to find if the results changes or not.
 ```{r}
@@ -187,17 +193,19 @@ tf_idf    <- mutate(tf_idf, word = factor(word, levels = rev(unique(word))))
 
 # Grab the top thirty tf_idf scores in all the words 
 tf_idf_30 <- top_n(tf_idf, 30, tf_idf)
-png('../figs/tf_idf_stem.png')
+#png('../figs/tf_idf_stem.png')
 p_ts<-ggplot(tf_idf_30) +
   geom_col(aes(word, tf_idf, fill = author)) +
   labs(x = NULL, y = "TF-IDF values") +
   theme(legend.position = "top", axis.text.x  = element_text(angle=45, hjust=1, vjust=0.9))
 p_ts
-dev.off()
+#dev.off()
 ```
 Note that the graph result actually don't change. Maybe it's because the high TF-IDF value words are names. The stems of names are the same as names. 
-#Sentiment Analysis
-## nrc lexicon
+
+# Section3: Sentiment Analysis
+
+## Nrc lexicon
 In the sentiment analysis part, we want to measure what is the proportion of the sentiment was positive or negative. We first use the nrc lexicons.
 ```{r}
 nrc_filter <- filter(get_sentiments('nrc'), sentiment %in% c("positive","negative"))
@@ -253,12 +261,13 @@ p6 = ggplot(dt5, aes(x = "", y = A, fill = B)) +
   theme(legend.title = element_blank(), legend.position = "top") + 
   scale_fill_discrete(breaks = dt5$B, labels = myLabel)+
   theme(axis.text.x = element_blank())
-png('../figs/nrc_pos.png')
+#png('../figs/nrc_pos.png')
 multiplot(p4,p5,p6,cols=2)
-dev.off()
+#dev.off()
 ```
 Overall we can see that in different authors' text, the negative sentiment accounts more than the positive sentiment. In Edgar Allan Poe's article, he has more positive parts.
-## bing lexicon
+
+## Bing lexicon
 Now we repeat what we did in last part again, but this time we use the "bing" lexicons, we use the setiment analysis package of bing
 ```{r}
 sentiments_bing<-inner_join(spooky_wrd, get_sentiments('bing'), by = "word")
@@ -313,11 +322,12 @@ p6 = ggplot(dt5, aes(x = "", y = A, fill = B)) +
   theme(legend.title = element_blank(), legend.position = "top") + 
   scale_fill_discrete(breaks = dt5$B, labels = myLabel)+
   theme(axis.text.x = element_blank())
-png('../figs/bing_pos.png')
+#png('../figs/bing_pos.png')
 multiplot(p4,p5,p6,cols=2)
-dev.off()
+#dev.off()
 ```
 Using the "bing" lexicon, the result actually doesn't change. In text,the negative sentiment accounts more than the positive sentiment. Besides, we can see that now the neagtive sentiment is accounting more part than before. Now in Edgar Allan Poe's article, he has more negative parts.
+
 ## Emotion rank
 In this part we will try to find what are the top few emotions represented by each author and the difference
 ```{r}
@@ -344,13 +354,13 @@ p9<-ggplot(MWS_emotion,aes(x=reorder(sentiment,n),y=n,fill=sentiment))+
    labs(x = NULL, y = "count")+
    facet_wrap(~ author)+
    theme(legend.position = "none")
-png('../figs/emotion_difference.png')
+#png('../figs/emotion_difference.png')
 multiplot(p7,p8,p9,cols=3)
-dev.off()
+#dev.off()
 ```
 We can see that the top emotions are pretty different among these authors. For Edgar Allan Poe, his top emotions are "trust, fear and anticipation". HP Lovecraft's top emotions are "fear, sadness and trust". Mary Shelley's top emotions are "fear, trust and sadness".
 
-#Topic Modelling
+# Section 4: Topic Modelling
 In the topic modelling part, we try to visualize author topics and we choose 6 topics.
 ```{r}
 #EAP
@@ -389,11 +399,11 @@ spooky_wrd_topics_MWS <- tidy(spooky_wrd_lda_MWS, matrix = "beta")
 spooky_wrd_topics_5_MWS <- ungroup(top_n(group_by(spooky_wrd_topics_MWS, topic), 5, beta))
 spooky_wrd_topics_5_MWS <- arrange(spooky_wrd_topics_5_MWS, topic, -beta)
 spooky_wrd_topics_5_MWS <- mutate(spooky_wrd_topics_5_MWS, term = reorder(term, beta))
-png('../figs/MWS_topic.png')
+#png('../figs/MWS_topic.png')
 ggplot(spooky_wrd_topics_5_MWS) +
   geom_col(aes(term, beta, fill = factor(topic)), show.legend = FALSE) +
   facet_wrap(~ topic, scales = "free", ncol = 3) +
   coord_flip()
-dev.off()
+#dev.off()
 ```
 In the above, we see that for Edgar Allan Poe, the first topic is characterized by words like "doubt", "time", and the third topic includes the word "death", and the fifth topic the word "individual". For HP Lovecraft,  the first topic is characterized by words like "strange", "house", and the third topic includes the word "death", and the sixth topic the word "time","life. For Mary Shelley, she first topic is characterized by words like "heart", "love", and the third topic includes the word "time" and "life", and the fifth topic the word "hand". Note that the words "eyes", "time" and "life" appear in many topics.  
