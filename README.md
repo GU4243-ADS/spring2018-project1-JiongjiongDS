@@ -61,8 +61,22 @@ We take a look at the difference of using he/she between different authors.
 ![image](figs/gender_difference.png)
 
 Both Edgar Allan Poe and HP Lovecraft have very clear preference in using masculine third-person word or feminine third-person word. Edgar Allan Poe uses the masculine third-person word more often (he,him,his) while HP Lovecraft uses the feminine third-person word (she,her) more often. Mary Shelley uses masculine third-person word and feminine third-person word almost equally (A bit more in masculine).
-### Sentiment Analysis of different authors
-#### Negative/Positive
+### TF-IDF values
+We try to find words that are characteristic for a specific author by using tf-idf as a heuristic index to indicate how frequently a certain author uses a word.
+
+![image](figs/tf_idf.png)
+
+The above graph shows the thirty tf_idf scores in all the words and we see that words from Mary Shelley have the highest TF-IDF values. Besides, most of the words in the top 30 are actually names. Names work quite well in identifying authors as there is little possibilty that different authors will use the same name for their characters.
+
+### TF-IDF values after stem
+
+We use the "wordstem" function to extract the stems of each of the given words and then compute the TF-IDF values of words again to find if the results changes or not.
+
+![image](figs/tf_idf.png)
+
+Note that the graph result actually don't change. Maybe it's because the high TF-IDF value words are names. The stems of names are the same as names. 
+## Sentiment Analysis of different authors
+### Negative/Positive
 In this sentiment analysis part, we do the sentiment analysis on the word level.
 We first use the **"nrc"** lexicon and measure the negetive and positive portion of total sentiment.
 
@@ -74,23 +88,23 @@ To prove that our result is robust, we choose one different lexicon **"bing"**.
 ![image](figs/bing_pos.png)
 
 Using the "bing" lexicon, the result actually doesn't change. In text,the negative sentiment accounts more than the positive sentiment. Besides, we can see that now the neagtive sentiment is accounting more part than before. Now in Edgar Allan Poe's article, he has more negative parts.
-#### Top emptions by different authors
+### Top emptions by different authors
 Since in the Negative/Positive part, the result of using different lexicons is not that different, so we still use the **"nrc"** lexicon to find the top emotions of different authors.
 
 ![image](figs/emotion_difference.png)
 
 We can see that the top emotions are pretty different among these authors. For Edgar Allan Poe, his top emotions are "trust, fear and anticipation". HP Lovecraft's top emotions are "fear, sadness and trust". Mary Shelley's top emotions are "fear, trust and sadness".
-### Topic Modelling
+## Topic Modelling
 In this part we will do the topic modelling of different authors. We choose 6 topics and the visualization of the author topics are:
-#### Edgar Allan Poe topic
+### Edgar Allan Poe topic
 
 ![image](figs/EAP_topic.png)
 
-#### HP Lovecraft topic
+### HP Lovecraft topic
 
 ![image](figs/HPL_topic.png)
 
-#### Mary Shelley topic
+### Mary Shelley topic
 
 ![image](figs/MWS_topic.png)
 
