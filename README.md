@@ -82,14 +82,16 @@ Since in the Negative/Positive part, the result of using different lexicons is n
 We can see that the top emotions are pretty different among these authors. For Edgar Allan Poe, his top emotions are "trust, fear and anticipation". HP Lovecraft's top emotions are "fear, sadness and trust". Mary Shelley's top emotions are "fear, trust and sadness".
 ### Topic Modelling
 In this part we will do the topic modelling of different authors. We choose 6 topics and the visualization of the author topics are:
-#### EAP topic
+#### Edgar Allan Poe topic
 
 ![image](figs/EAP_topic.png)
 
-#### HPL topic
+#### HP Lovecraft topic
 
 ![image](figs/HPL_topic.png)
 
-#### MWS topic
+#### Mary Shelley topic
 
 ![image](figs/MWS_topic.png)
+
+In the above, we see that for Edgar Allan Poe, the first topic is characterized by words like "doubt", "time", and the third topic includes the word "death", and the fifth topic the word "individual". For HP Lovecraft,  the first topic is characterized by words like "strange", "house", and the third topic includes the word "death", and the sixth topic the word "time","life. For Mary Shelley, she first topic is characterized by words like "heart", "love", and the third topic includes the word "time" and "life", and the fifth topic the word "hand". Note that the words "eyes", "time" and "life" appear in many topics.  

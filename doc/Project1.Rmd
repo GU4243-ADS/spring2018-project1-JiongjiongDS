@@ -5,7 +5,6 @@ date: "01/30/2018"
 output:
   html_document: default
   pdf_document: default
-
 ---
 # Section 0 Preparations, install and load the needed packages
 ```{r}
@@ -349,4 +348,4 @@ ggplot(spooky_wrd_topics_5_MWS) +
   coord_flip()
 dev.off()
 ```
-
+In the above, we see that for Edgar Allan Poe, the first topic is characterized by words like "doubt", "time", and the third topic includes the word "death", and the fifth topic the word "individual". For HP Lovecraft,  the first topic is characterized by words like "strange", "house", and the third topic includes the word "death", and the sixth topic the word "time","life. For Mary Shelley, she first topic is characterized by words like "heart", "love", and the third topic includes the word "time" and "life", and the fifth topic the word "hand". Note that the words "eyes", "time" and "life" appear in many topics.  
