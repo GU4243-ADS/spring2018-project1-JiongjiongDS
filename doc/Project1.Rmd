@@ -5,9 +5,9 @@ date: "01/30/2018"
 output:
   html_document: default
   pdf_document: default
-  word_document: default
+  
 ---
-# Section 0 Preparations, install and load the needed packages
+# Section 0: Preparations, install and load the needed packages
 ```{r}
 packages.used <- c("ggplot2", "dplyr", "tibble", "tidyr",  "stringr", "tidytext", "topicmodels", "wordcloud", "ggridges","SnowballC")
 
@@ -77,6 +77,8 @@ We generate one word cloud graph of the whole spooky file.
   with(wordcloud(word, n, max.words = 50, color = c("purple4", "red4", "black")))
 #dev.off()
 ```
+We can see from the above graph that frequent words in spooky data are "love", "dark" and "human".
+
 We draw the worldcloud for EAP
 ```{r}
 words_EAP <- count(group_by(EAP_nstop, word))$word
